@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class Bloc {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBloc;
     private String nomBloc;
     private Long capaciteBloc;
@@ -22,5 +23,10 @@ public class Bloc {
 
     @OneToMany(mappedBy = "bloc")
     private List<Chambre> chambres ;
+
+    public Long getIdBloc() {
+        return idBloc;
+    }
+
 
 }

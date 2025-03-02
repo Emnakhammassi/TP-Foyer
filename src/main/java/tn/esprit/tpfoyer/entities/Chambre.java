@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +14,7 @@ import java.util.List;
 @Setter
 public class Chambre {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idChambre;
     private Long numeroChambre;
 
@@ -28,5 +26,10 @@ public class Chambre {
 
     @OneToMany
     private List<Reservation> reservations ;
+
+    public Long getIdChambre() {
+        return idChambre;
+    }
+
 
 }

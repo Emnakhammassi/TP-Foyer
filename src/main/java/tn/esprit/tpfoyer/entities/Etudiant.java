@@ -4,12 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
+
+
+
+
+
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -17,6 +22,7 @@ import java.util.List;
 public class Etudiant {
 
         @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long idEtudiant;
         private String nomEt;
         private String prenomEt;
@@ -26,4 +32,9 @@ public class Etudiant {
 
         @ManyToMany(mappedBy = "etudiants")
         private List<Reservation> reservations ;
-    }
+
+        public Long getIdEtudiant() {
+                return idEtudiant;
+        }
+
+}

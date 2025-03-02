@@ -15,12 +15,17 @@ import java.util.Set;
 @Setter
 public class Reservation {
     @Id
-    private String idReservation;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idReservation;
     private Date anneeUniversitaire;
     private boolean estValide;
 
     @ManyToMany
     private Set<Etudiant> etudiants;
+
+    public Long getIdReservation() {
+        return idReservation;
+    }
 
 
 }

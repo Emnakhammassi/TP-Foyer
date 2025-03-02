@@ -9,13 +9,27 @@ import lombok.Setter;
 import java.util.List;
 
 
+
+
+
+
+
+
+
 @Entity
+
+
+
+
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Foyer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idFoyer;
     private String nomFoyer;
     private Long capaciteFoyer;
@@ -25,4 +39,9 @@ public class Foyer {
 
     @OneToMany(mappedBy = "foyer")
     private List<Bloc> blocs ;
+
+    public Long getIdFoyer() {
+        return idFoyer;
+    }
+
 }
