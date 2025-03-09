@@ -1,9 +1,12 @@
 package tn.esprit.tpfoyer.controllers;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Reservation;
 import tn.esprit.tpfoyer.services.IReservationServices;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -29,5 +32,17 @@ public class ReservationController {
     public Reservation updateReservation(@PathVariable("id") Long idReservation, @RequestBody Reservation reservation) {
 
         return reservationService.updateReservation(reservation);
+    }
+
+    @GetMapping("/byAnneeAndUniversite")
+    public ResponseEntity<List<Reservation>> getReservationParAnneeUniversitaireEtNomUniversite(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date anneeUniversite,
+            @RequestParam String nomUniversite
+    ) {
+        List<Reservation> reservations = reservationService.getReservationParAnneeUniversitaireEtNomUniversite(anneeUniversite, nomUniversite);
+        if (reservations.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(reservations);
     }
 }

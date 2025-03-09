@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Universite;
 import tn.esprit.tpfoyer.services.IUniversiteServices;
 
+import org.springframework.http.ResponseEntity;
+
+
 import java.util.List;
 
 @RestController
@@ -35,5 +38,24 @@ public class UniversiteController {
     @GetMapping("/getById/{id}")
     public Universite retrieveUniversite(@PathVariable("id") long idUniversite) {
         return universiteService.retrieveUniversite(idUniversite);
+    }
+
+
+
+
+    // Affecter un foyer à une université
+    @PostMapping("/affecter-foyer")
+    public ResponseEntity<Universite> affecterFoyerAUniversite(
+            @RequestParam long idFoyer,
+            @RequestParam String nomUniversite) {
+        Universite universite = universiteService.affecterFoyerAUniversite(idFoyer, nomUniversite);
+        return ResponseEntity.ok(universite);
+    }
+
+    // Désaffecter un foyer d'une université (optionnel)
+    @PostMapping("/desaffecter-foyer/{idUniversite}")
+    public ResponseEntity<Universite> desaffecterFoyerAUniversite(@PathVariable long idUniversite) {
+        Universite universite = universiteService.desaffecterFoyerAUniversite(idUniversite);
+        return ResponseEntity.ok(universite);
     }
 }

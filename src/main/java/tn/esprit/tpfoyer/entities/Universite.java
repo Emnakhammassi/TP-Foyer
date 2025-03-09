@@ -26,4 +26,13 @@ public class Universite {
         return idUniversite;
     }
 
+///
+// Manually added getter and setter for foyer
+public Foyer getFoyer() {
+    return foyer;
+}
+
+    public void setFoyer(Foyer foyer) {
+        this.foyer = foyer;
+    }
 }

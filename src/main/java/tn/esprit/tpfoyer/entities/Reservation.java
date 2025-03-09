@@ -23,6 +23,9 @@ public class Reservation {
     @ManyToMany
     private Set<Etudiant> etudiants;
 
+    @ManyToOne
+    private Chambre chambre;
+
     public Long getIdReservation() {
         return idReservation;
     }

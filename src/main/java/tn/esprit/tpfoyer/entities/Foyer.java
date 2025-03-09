@@ -44,4 +44,14 @@ public class Foyer {
         return idFoyer;
     }
 
+
+    ///
+    // Manually added getter and setter for universite
+    public Universite getUniversite() {
+        return universite;
+    }
+
+    public void setUniversite(Universite universite) {
+        this.universite = universite;
+    }
 }

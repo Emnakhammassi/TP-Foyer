@@ -1,16 +1,20 @@
 package tn.esprit.tpfoyer.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entities.Bloc;
+import tn.esprit.tpfoyer.entities.Chambre;
+import tn.esprit.tpfoyer.entities.TypeChambre;
 import tn.esprit.tpfoyer.repositories.IBlocRepository;
+import tn.esprit.tpfoyer.repositories.IChambreReposirtory;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class BlocServiceImpl implements IBlocServices {
-
+    private final IChambreReposirtory chambreRepository;
     IBlocRepository iBlocRepository;
 
     @Override
@@ -40,5 +44,17 @@ public class BlocServiceImpl implements IBlocServices {
     public void removeBloc(long idBloc) {
         iBlocRepository.deleteById(idBloc);
 
+    }
+    // ✅ Ajout du constructeur pour injecter la dépendance
+    @Autowired
+    public BlocServiceImpl(IChambreReposirtory chambreRepository) {
+        this.chambreRepository = chambreRepository;
+    }
+
+    /**
+     * Récupérer les chambres non réservées d'un foyer d'une université donnée et de type spécifique.
+     */
+    public List<Chambre> getChambresNonReserveParNomUniversiteEtTypeChambre(String nomUniversite, TypeChambre type) {
+        return chambreRepository.findChambresNonReservees(nomUniversite, type);
     }
 }
