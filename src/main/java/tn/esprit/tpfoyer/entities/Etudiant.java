@@ -1,24 +1,17 @@
 package tn.esprit.tpfoyer.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.Date;
 import java.util.List;
 
 @Entity
-
-
-
-
-
-
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Etudiant {
 
         @Id
@@ -31,10 +24,12 @@ public class Etudiant {
         private Date dateNaissance;
 
         @ManyToMany(mappedBy = "etudiants")
+        @JsonIgnore
         private List<Reservation> reservations ;
 
         public Long getIdEtudiant() {
                 return idEtudiant;
         }
+
 
 }

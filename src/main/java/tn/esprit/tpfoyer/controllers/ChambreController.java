@@ -37,19 +37,5 @@ public class ChambreController {
         return chambreService.updateChambre(chambre);
     }
 
-    //pour récupérer les chambres non réservées d'un foyer d'une université spécifique.
-    @GetMapping("/nonReservees")
-    public List<Chambre> getChambresNonReserveParNomUniversiteEtTypeChambre(
-            @RequestParam String nomUniversite,
-            @RequestParam TypeChambre type) {
-        return chambreService.getChambresNonReserveParNomUniversiteEtTypeChambre(nomUniversite, type);
-    }
 
-    @GetMapping("/par-bloc-et-type")
-    public List<Chambre> getChambresParBlocEtType(
-            @RequestParam Long idBloc,
-            @RequestParam TypeChambre typeC
-    ) {
-        return chambreService.getChambresParBlocEtType(idBloc, typeC);
-    }
 }

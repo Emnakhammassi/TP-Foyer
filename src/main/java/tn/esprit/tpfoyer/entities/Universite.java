@@ -1,5 +1,6 @@
 package tn.esprit.tpfoyer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class Universite {
     private String adresse;
 
     @OneToOne(mappedBy = "universite")
+    @JsonIgnore
     private Foyer foyer;
 
     public Long getIdUniversite() {

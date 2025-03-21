@@ -1,4 +1,5 @@
 package tn.esprit.tpfoyer.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import jakarta.persistence.Entity;
@@ -22,14 +23,15 @@ public class Chambre {
     private TypeChambre typeC;
 
     @ManyToOne
+    @JsonIgnore
     private Bloc bloc;
 
     @OneToMany
+    @JsonIgnore
     private List<Reservation> reservations ;
 
     public Long getIdChambre() {
         return idChambre;
     }
-
 
 }

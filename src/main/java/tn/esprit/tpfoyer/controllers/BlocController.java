@@ -1,6 +1,7 @@
 package tn.esprit.tpfoyer.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.services.IBlocServices;
@@ -11,6 +12,7 @@ import java.util.List;
 @RequestMapping("/bloc")
 @AllArgsConstructor
 public class BlocController {
+    @Autowired
     IBlocServices blocService;
 
 
@@ -41,5 +43,22 @@ public class BlocController {
     @DeleteMapping("/removeBloc/{id}")
     public void removeBloc(@PathVariable("id") long idBloc) {
         blocService.removeBloc(idBloc);
+    }
+    // Affecter une liste de chambres à un bloc
+//    @PutMapping("/affecterChambresABloc/{idBloc}")
+//    public Bloc affecterChambresABloc(@PathVariable long idBloc, @RequestBody List<Long> numChambre) {
+//        return blocService.affecterChambresABloc(numChambre, idBloc);
+//    }
+    @PutMapping("affecterBlocAFoyer/{nomFoyer}/{nomBloc}")
+    Bloc affecterBlocAFoyer(@PathVariable String nomBloc, @PathVariable String nomFoyer) {
+        return blocService.affecterBlocAFoyer(nomBloc, nomFoyer);
+    }
+
+    @PutMapping("/affecterChambresABloc/{idBloc}")
+    public Bloc affecterChambresABloc(
+            @PathVariable long idBloc, // idBloc dans le chemin
+            @RequestBody List<Long> numChambres // Liste de numChambres dans le corps
+    ) {
+        return blocService.affecterChambresABloc(numChambres, idBloc);
     }
 }

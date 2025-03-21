@@ -1,6 +1,8 @@
 package tn.esprit.tpfoyer.controllers;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.tpfoyer.entities.Foyer;
 import tn.esprit.tpfoyer.entities.Universite;
 import tn.esprit.tpfoyer.services.IUniversiteServices;
 
@@ -44,18 +46,27 @@ public class UniversiteController {
 
 
     // Affecter un foyer à une université
-    @PostMapping("/affecter-foyer")
-    public ResponseEntity<Universite> affecterFoyerAUniversite(
-            @RequestParam long idFoyer,
-            @RequestParam String nomUniversite) {
-        Universite universite = universiteService.affecterFoyerAUniversite(idFoyer, nomUniversite);
-        return ResponseEntity.ok(universite);
+    @PutMapping("/affecter/{idFoyer}/{nomUniversite}")
+    public Foyer affecterFoyerAUniversite(
+            @PathVariable("idFoyer") long idFoyer,
+            @PathVariable("nomUniversite") String nomUniversite) {
+
+        return universiteService.affecterFoyerAUniversite(idFoyer, nomUniversite);
+
     }
 
     // Désaffecter un foyer d'une université (optionnel)
-    @PostMapping("/desaffecter-foyer/{idUniversite}")
+    @PutMapping("/desaffecter-foyer/{idUniversite}")
     public ResponseEntity<Universite> desaffecterFoyerAUniversite(@PathVariable long idUniversite) {
-        Universite universite = universiteService.desaffecterFoyerAUniversite(idUniversite);
-        return ResponseEntity.ok(universite);
+        try {
+            // Appeler le service pour désaffecter le foyer
+            Universite universite = universiteService.desaffecterFoyerAUniversite(idUniversite);
+
+            // Retourner une réponse HTTP 200 avec l'université mise à jour
+            return ResponseEntity.ok(universite);
+        } catch (RuntimeException e) {
+            // Retourner une réponse HTTP 400 en cas d'erreur (par exemple, université non trouvée)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 }

@@ -1,9 +1,6 @@
 package tn.esprit.tpfoyer.services;
 
-import tn.esprit.tpfoyer.entities.Chambre;
-import tn.esprit.tpfoyer.entities.Reservation;
-import tn.esprit.tpfoyer.entities.TypeChambre;
-import tn.esprit.tpfoyer.entities.Universite;
+import tn.esprit.tpfoyer.entities.*;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +13,8 @@ public interface IUniversiteServices {
 
     ///
     // Affecter un foyer à une université
-    Universite affecterFoyerAUniversite(long idFoyer, String nomUniversite);
+    Foyer affecterFoyerAUniversite (long idFoyer, String
+            nomUniversite);
 
     // Désaffecter un foyer d'une université
     Universite desaffecterFoyerAUniversite(long idUniversite);

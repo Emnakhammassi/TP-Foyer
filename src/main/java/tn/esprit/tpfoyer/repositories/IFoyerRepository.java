@@ -9,5 +9,7 @@ import tn.esprit.tpfoyer.entities.Foyer;
 public interface IFoyerRepository extends JpaRepository<Foyer, Long> {
 
     public Foyer findByNomFoyerAndCapaciteFoyer(String nomFoyer, Long capaciteFoyer);
+    Foyer findByNomFoyer(String nom);
+
 
 }

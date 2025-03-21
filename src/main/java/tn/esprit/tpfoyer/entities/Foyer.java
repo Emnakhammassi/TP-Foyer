@@ -1,4 +1,5 @@
 package tn.esprit.tpfoyer.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -35,9 +36,11 @@ public class Foyer {
     private Long capaciteFoyer;
 
     @OneToOne
+    @JsonIgnore
     private Universite universite;
 
     @OneToMany(mappedBy = "foyer")
+    @JsonIgnore
     private List<Bloc> blocs ;
 
     public Long getIdFoyer() {
