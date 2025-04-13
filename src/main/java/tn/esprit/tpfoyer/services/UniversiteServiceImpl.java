@@ -1,85 +1,99 @@
 package tn.esprit.tpfoyer.services;
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tn.esprit.tpfoyer.entities.*;
-import tn.esprit.tpfoyer.repositories.IFoyerRepository;
+import tn.esprit.tpfoyer.entities.Foyer;
+import tn.esprit.tpfoyer.entities.Universite;
 import tn.esprit.tpfoyer.repositories.IUniversiteRepository;
+import tn.esprit.tpfoyer.repositories.IFoyerRepository;
+
 import java.util.List;
 
-
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UniversiteServiceImpl implements IUniversiteServices {
-    IUniversiteRepository universiteRepository;
-    IFoyerRepository foyerRepository;
+
+    private final IUniversiteRepository universiteRepository; // Repository pour les opérations sur les universités
+    private final IFoyerRepository foyerRepository; // Repository pour les opérations sur les foyers
 
     @Override
     public List<Universite> retrieveAllUniversities() {
+        // Récupère toutes les universités de la base de données
         return universiteRepository.findAll();
     }
 
     @Override
-    public Universite addUniversite(Universite u) {
-        return universiteRepository.save(u);
+    public Universite addUniversite(Universite universite) {
+        // Ajoute une nouvelle université dans la base de données
+        return universiteRepository.save(universite);
     }
 
     @Override
-    public Universite updateUniversite(Universite u) {
-        if (universiteRepository.existsById(u.getIdUniversite())) {
-            return universiteRepository.save(u);
+    public Universite updateUniversite(Long idUniversite, Universite universite) {
+        // Récupère l'université existante par son ID
+        Universite existingUniversite = universiteRepository.findById(idUniversite).orElse(null);
+
+        if (existingUniversite != null) {
+            // Si l'université existe, met à jour ses informations
+            existingUniversite.setNomUniversite(universite.getNomUniversite());
+            existingUniversite.setAdresse(universite.getAdresse());
+            // Mettez à jour d'autres champs si nécessaire
+            return universiteRepository.save(existingUniversite);
         }
-        return null;
+
+        return null; // Si l'université n'existe pas, retourne null (ou une exception selon la gestion des erreurs)
     }
 
     @Override
-    public Universite retrieveUniversite(long idUniversite) {
-
+    public Universite retrieveUniversite(Long idUniversite) {
+        // Récupère une université par son ID, si elle existe
         return universiteRepository.findById(idUniversite).orElse(null);
     }
 
-    ///
     @Override
-    public Foyer affecterFoyerAUniversite(long idFoyer, String nomUniversite) {
-        Foyer foyer = foyerRepository.findById(idFoyer).orElse(null);
-        if (foyer == null) {
-            throw new RuntimeException("Foyer introuvable !");
-        }
-        // Récupérer l'université par son nom
-        Universite universite = universiteRepository.findByNomUniversite(nomUniversite);
-        if (universite == null) {
-            throw new RuntimeException("Université introuvable !");
-        }
-
-        // Affecter le foyer à l'université
-        foyer.setUniversite(universite);
-        return foyerRepository.save(foyer);
+    public void removeUniversite(Long idUniversite) {
+        // Supprime une université par son ID
+        universiteRepository.deleteById(idUniversite);
     }
 
+    @Override
+    public Universite affecterFoyerAUniversite(long idFoyer, String nomUniversite) {
+        // Récupère l'université par son nom
+        Universite universite = universiteRepository.findByNomUniversite(nomUniversite);
+        // Récupère le foyer par son ID
+        Foyer foyer = foyerRepository.findById(idFoyer).orElse(null);
 
-    @Transactional
+        if (universite != null && foyer != null) {
+            // Si l'université et le foyer existent, associer le foyer à l'université
+            foyer.setUniversite(universite);
+            foyerRepository.save(foyer); // Sauvegarde du foyer avec la nouvelle association
+            return universite;
+        }
+
+        return null; // Si l'un des éléments est null, retourne null
+    }
+
+    @Override
     public Universite desaffecterFoyerAUniversite(long idUniversite) {
-
-        // Récupérer l'université par son ID
+        // Récupère l'université par son ID
         Universite universite = universiteRepository.findById(idUniversite).orElse(null);
 
-        // Vérifier si l'université a un foyer associé
-        if (universite.getFoyer() == null) {
+        // Vérifie si l'université a un foyer associé
+        if (universite == null || universite.getFoyer() == null) {
             throw new RuntimeException("Cette université n'a pas de foyer associé !");
         }
 
-        // Récupérer le foyer associé
+        // Récupère le foyer associé à l'université
         Foyer foyer = universite.getFoyer();
 
-        // Désaffecter l'université du foyer
+        // Désassocie l'université du foyer
         foyer.setUniversite(null);
+        foyerRepository.save(foyer); // Sauvegarde du foyer avec la désassociation
 
-        // Sauvegarder la modification du foyer
-        foyerRepository.save(foyer);
-
-        // Mettre à jour l'université en supprimant l'association avec le foyer
+        // Supprime l'association du foyer dans l'université
         universite.setFoyer(null);
+
+        // Met à jour et sauvegarde l'université sans le foyer associé
         return universiteRepository.save(universite);
     }
 }

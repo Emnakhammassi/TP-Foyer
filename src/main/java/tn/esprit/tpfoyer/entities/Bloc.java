@@ -1,4 +1,5 @@
 package tn.esprit.tpfoyer.entities;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,30 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Bloc {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id // Clé primaire
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-incrémenté
     private Long idBloc;
-    private String nomBloc;
-    private Long capaciteBloc;
 
-    @ManyToOne
-    @JsonIgnore
-    private Foyer foyer;
+    private String nomBloc; // Nom du bloc
 
-    @OneToMany(mappedBy = "bloc")
-    @JsonIgnore
-    private List<Chambre> chambres ;
+    private Long capaciteBloc; // Capacité totale du bloc
 
-    public Long getIdBloc() {
-        return idBloc;
-    }
+    @ManyToOne // Plusieurs blocs peuvent appartenir à un seul foyer
+    @JsonIgnore // Empêche les boucles infinies en JSON
+    private Foyer foyer; // Référence vers le foyer auquel appartient ce bloc
 
+    @OneToMany(mappedBy = "bloc") // Un bloc peut contenir plusieurs chambres
+    @JsonIgnore // Empêche la sérialisation JSON récursive
+    private List<Chambre> chambres; // Liste des chambres contenues dans ce bloc
 
 }

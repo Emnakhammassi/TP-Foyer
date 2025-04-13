@@ -1,5 +1,6 @@
 package tn.esprit.tpfoyer.controllers;
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,43 +11,51 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservation")
-@AllArgsConstructor
+@RequestMapping("/reservations")
+@RequiredArgsConstructor
 public class ReservationController {
-    IReservationServices reservationService;
+    private final IReservationServices reservationService;
 
-
-    @GetMapping("/getAllReservations")
-    public List<Reservation> retrieveAllReservations() {
+    // Récupérer toutes les réservations
+    @GetMapping("/all")
+    public List<Reservation> getAllReservations() {
         return reservationService.retrieveAllReservation();
     }
 
-
-    @GetMapping("/getById/{id}")
-    public Reservation retrieveReservation(@PathVariable("id") Long idReservation) {
-        return reservationService.retrieveReservation(idReservation);
+    // Mettre à jour une réservation
+    @PutMapping("/update")
+    public Reservation updateReservation(@RequestBody Reservation res) {
+        return reservationService.updateReservation(res);
     }
 
-
-    @PutMapping("/updateReservation/{id}")
-    public Reservation updateReservation(@PathVariable("id") Long idReservation, @RequestBody Reservation reservation) {
-
-        return reservationService.updateReservation(reservation);
+    // Récupérer une réservation par ID
+    @GetMapping("/get/{id}")
+    public Reservation getReservation(@PathVariable Long id) {
+        return reservationService.retrieveReservation(id);
     }
 
-    @GetMapping("/byAnneeAndUniversite")
-    public ResponseEntity<List<Reservation>> getReservationParAnneeUniversitaireEtNomUniversite(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date anneeUniversite,
-            @RequestParam String nomUniversite
-    ) {
-        List<Reservation> reservations = reservationService.getReservationParAnneeUniversitaireEtNomUniversite(anneeUniversite, nomUniversite);
-        if (reservations.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(reservations);
-    }
-    @PostMapping("/{idBloc}/{cinEtudiant}")
-    public Reservation ajouterReservation(@PathVariable long idBloc, @PathVariable long cinEtudiant) {
+    // Ajouter une réservation en fonction de l'ID du bloc et du CIN de l'étudiant
+    @PostMapping("/ajouter/{idBloc}/{cinEtudiant}")
+    public Reservation ajouterReservation(@PathVariable Long idBloc, @PathVariable Long cinEtudiant) {
         return reservationService.ajouterReservation(idBloc, cinEtudiant);
+    }
+
+    // Annuler une réservation en fonction du CIN de l'étudiant
+    @PutMapping("/annuler/{cinEtudiant}")
+    public ResponseEntity<Reservation> annulerReservation(@PathVariable Long cinEtudiant) {
+        Reservation annulee = reservationService.annulerReservation(cinEtudiant);
+        return ResponseEntity.ok(annulee);
+    }
+
+    // Récupérer les réservations par année universitaire et par université
+    @GetMapping("/by-year-and-university")
+    public ResponseEntity<List<Reservation>> getReservationsByYearAndUniversity(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date anneeUniversite,
+            @RequestParam String nomUniversite) {
+
+        List<Reservation> reservations = reservationService
+                .getReservationParAnneeUniversitaireEtNomUniversite(anneeUniversite, nomUniversite);
+
+        return ResponseEntity.ok(reservations);
     }
 }

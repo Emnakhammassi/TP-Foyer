@@ -1,60 +1,27 @@
 package tn.esprit.tpfoyer.entities;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
-
-
-
-
-
-
-
-
-
 @Entity
-
-
-
-
-
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Foyer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id // Clé primaire
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Génération automatique de l'ID
     private Long idFoyer;
-    private String nomFoyer;
-    private Long capaciteFoyer;
 
-    @OneToOne
-    @JsonIgnore
-    private Universite universite;
+    private String nomFoyer; // Nom du foyer
 
-    @OneToMany(mappedBy = "foyer")
-    @JsonIgnore
-    private List<Bloc> blocs ;
+    private Long capaciteFoyer; // Capacité totale du foyer (en nombre de places)
 
-    public Long getIdFoyer() {
-        return idFoyer;
-    }
+    @OneToOne // Relation 1-1 directe avec Université
+    private Universite universite; // Chaque foyer est rattaché à une seule université
 
-
-    ///
-    // Manually added getter and setter for universite
-    public Universite getUniversite() {
-        return universite;
-    }
-
-    public void setUniversite(Universite universite) {
-        this.universite = universite;
-    }
+    @OneToMany(mappedBy = "foyer") // Relation 1-N avec Bloc, (Bloc contient une référence vers Foyer)
+    private List<Bloc> blocs; // Liste des blocs appartenant à ce foyer
 }

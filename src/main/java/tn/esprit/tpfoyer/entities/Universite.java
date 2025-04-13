@@ -7,34 +7,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Entity // Indique que cette classe est une entité JPA (sera une table dans la BD)
+@NoArgsConstructor // Génère un constructeur sans arguments
+@AllArgsConstructor // Génère un constructeur avec tous les arguments
+@Getter // Génère les getters pour tous les champs
+@Setter // Génère les setters pour tous les champs
 public class Universite {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id // Clé primaire de l'entité
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-incrémentation de l'ID
     private Long idUniversite;
-    private String nomUniversite;
-    private String adresse;
 
-    @OneToOne(mappedBy = "universite")
-    @JsonIgnore
-    private Foyer foyer;
+    private String nomUniversite; // Nom de l'université
 
-    public Long getIdUniversite() {
-        return idUniversite;
-    }
+    private String adresse; // Adresse de l'université
 
-///
-// Manually added getter and setter for foyer
-public Foyer getFoyer() {
-    return foyer;
-}
-
-    public void setFoyer(Foyer foyer) {
-        this.foyer = foyer;
-    }
+    @OneToOne(mappedBy = "universite") // Relation 1-1 inverse avec l'entité Foyer
+    @JsonIgnore // Évite les boucles infinies lors de la sérialisation JSON
+    private Foyer foyer; // Chaque université a un seul foyer associé
 }

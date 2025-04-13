@@ -1,7 +1,7 @@
 package tn.esprit.tpfoyer.controllers;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.services.IBlocServices;
@@ -10,55 +10,45 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bloc")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BlocController {
-    @Autowired
-    IBlocServices blocService;
 
+    private final IBlocServices blocService;
 
-    @GetMapping("/getAllBlocs")
-    public List<Bloc> retrieveBlocs() {
-        return blocService.retrieveBlocs();
+    // Retourne la liste de tous les blocs
+    @GetMapping
+    public List<Bloc> getAllBlocs() {
+        return blocService.retrieveAllBlocs();
     }
 
-
-    @GetMapping("/getById/{id}")
-    public Bloc retrieveBloc(@PathVariable("id") long idBloc) {
-        return blocService.retrieveBloc(idBloc);
-    }
-
-    @PostMapping("/addBloc")
+    // Ajoute un nouveau bloc
+    @PostMapping
     public Bloc addBloc(@RequestBody Bloc bloc) {
         return blocService.addBloc(bloc);
     }
 
-    // Mettre à jour un bloc existant
-    @PutMapping("/updateBloc/{id}")
-    public Bloc updateBloc(@PathVariable("id") long idBloc, @RequestBody Bloc bloc) {
-
-        return blocService.updateBloc(bloc);
+    // Met à jour un bloc existant
+    @PutMapping("/{id}")
+    public Bloc updateBloc(@PathVariable Long id, @RequestBody Bloc bloc) {
+        return blocService.updateBloc(id, bloc);
     }
 
-    // Supprimer un bloc par ID
-    @DeleteMapping("/removeBloc/{id}")
-    public void removeBloc(@PathVariable("id") long idBloc) {
-        blocService.removeBloc(idBloc);
-    }
-    // Affecter une liste de chambres à un bloc
-//    @PutMapping("/affecterChambresABloc/{idBloc}")
-//    public Bloc affecterChambresABloc(@PathVariable long idBloc, @RequestBody List<Long> numChambre) {
-//        return blocService.affecterChambresABloc(numChambre, idBloc);
-//    }
-    @PutMapping("affecterBlocAFoyer/{nomFoyer}/{nomBloc}")
-    Bloc affecterBlocAFoyer(@PathVariable String nomBloc, @PathVariable String nomFoyer) {
-        return blocService.affecterBlocAFoyer(nomBloc, nomFoyer);
+    // Récupère un bloc par son ID
+    @GetMapping("/{id}")
+    public Bloc getBloc(@PathVariable Long id) {
+        return blocService.retrieveBloc(id);
     }
 
-    @PutMapping("/affecterChambresABloc/{idBloc}")
-    public Bloc affecterChambresABloc(
-            @PathVariable long idBloc, // idBloc dans le chemin
-            @RequestBody List<Long> numChambres // Liste de numChambres dans le corps
-    ) {
-        return blocService.affecterChambresABloc(numChambres, idBloc);
+    // Supprime un bloc par ID
+    @DeleteMapping("/{id}")
+    public void deleteBloc(@PathVariable Long id) {
+        blocService.removeBloc(id);
+    }
+
+    // Affecte une liste de chambres à un bloc donné
+    @PutMapping("/affecterChambres/{idBloc}")
+    public ResponseEntity<Bloc> affecterChambres(@RequestBody List<Long> numChambres, @PathVariable long idBloc) {
+        Bloc bloc = blocService.affecterChambresABloc(numChambres, idBloc);
+        return ResponseEntity.ok(bloc);
     }
 }

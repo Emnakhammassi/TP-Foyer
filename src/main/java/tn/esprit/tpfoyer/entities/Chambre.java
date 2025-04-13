@@ -1,12 +1,11 @@
 package tn.esprit.tpfoyer.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.List;
 @Entity
 @NoArgsConstructor
@@ -27,11 +26,7 @@ public class Chambre {
     private Bloc bloc;
 
     @OneToMany
+    @JoinColumn(name = "chambre_id") // Ceci crée la colonne FK dans Reservation
     @JsonIgnore
     private List<Reservation> reservations ;
-
-    public Long getIdChambre() {
-        return idChambre;
-    }
-
 }

@@ -1,41 +1,31 @@
 package tn.esprit.tpfoyer.entities;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.Date;
 import java.util.Set;
-
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class Reservation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id // Clé primaire de l'entité
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-généré par la base de données
     private Long idReservation;
-    private Date anneeUniversitaire;
-    private boolean estValide;
-    private String numReservation;
 
-    @ManyToMany
-    @JsonIgnore
-    private Set<Etudiant> etudiants;
+    private Date anneeUniversitaire; // Année universitaire de la réservation
 
-    public long  getIdReservation() {
-        return idReservation;
+    private boolean estValide; // Indique si la réservation est toujours valide (true/false)
 
-    }
+    private String numReservation; // Code unique de la réservation (ex: chambre-bloc-année)
 
-
-    public void setNumReservation(String numReservation) {
-        this.numReservation = numReservation;
-    }
-
-    public void setEtudiant(Etudiant etudiant) {
-        this.etudiants.add(etudiant);  // Assuming the relation is many-to-many
-    }
-
-
+    @ManyToMany // Une réservation peut concerner plusieurs étudiants (et inversement)
+    @JsonIgnore // Évite les problèmes de boucles infinies lors de la conversion JSON
+    private Set<Etudiant> etudiants; // Liste des étudiants liés à cette réservation
 }
+

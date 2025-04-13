@@ -1,13 +1,10 @@
 package tn.esprit.tpfoyer.services;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.entities.Foyer;
 import tn.esprit.tpfoyer.entities.Universite;
 import tn.esprit.tpfoyer.repositories.IBlocRepository;
-import tn.esprit.tpfoyer.repositories.IChambreReposirtory;
 import tn.esprit.tpfoyer.repositories.IFoyerRepository;
 import tn.esprit.tpfoyer.repositories.IUniversiteRepository;
 
@@ -15,105 +12,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FoyerServiceImpl implements IFoyerServices {
-
-    @Autowired
-    IFoyerRepository foyerRepository;
-    @Autowired
-    IUniversiteRepository universiteRepository;
-    @Autowired
-    IBlocRepository blocRepository;
-    @Autowired
-    IChambreReposirtory chambreReposirtory;
-    @Override
-    public Foyer findById(long id) {
-        return foyerRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<Foyer> findAll() {
-        return (List<Foyer>) foyerRepository.findAll();
-    }
-
-    @Override
-    public Foyer save(Foyer foyer) {
-        return foyerRepository.save(foyer);
-    }
-
-    @Override
-    public void delete(Long id) {
-        foyerRepository.deleteById(id);
-    }
-
-    @Override
-    public Foyer getNomCapacite(String nom, Long capacite) {
-        return foyerRepository.findByNomFoyerAndCapaciteFoyer(nom, capacite);
-    }
+    private final IFoyerRepository foyerRepository;
+    private final IUniversiteRepository universiteRepository;
+    private final IBlocRepository blocRepository;
 
     @Override
     public List<Foyer> retrieveAllFoyers() {
-        return List.of();
+        // Retourne la liste de tous les foyers
+        return foyerRepository.findAll();
     }
 
     @Override
-    public Foyer addFoyer(Foyer f)
-    {
+    public Foyer addFoyer(Foyer f) {
+        // Ajoute un foyer dans la base de données
         return foyerRepository.save(f);
     }
 
-
     @Override
-    public Foyer updateFoyer(Foyer f) {
-        if (foyerRepository.existsById(f.getIdFoyer())) {
-            return foyerRepository.save(f);
-        }
-        return null;
+    public Foyer updateFoyer(Long id, Foyer f) {
+        // Met à jour un foyer existant. Si les champs sont non null, ils sont mis à jour
+        return foyerRepository.findById(id)
+                .map(existing -> {
+                    if (f.getNomFoyer() != null) existing.setNomFoyer(f.getNomFoyer());
+                    if (f.getCapaciteFoyer() != null) existing.setCapaciteFoyer(f.getCapaciteFoyer());
+                    return foyerRepository.save(existing);
+                })
+                .orElseThrow(() -> new RuntimeException("Foyer non trouvé"));
     }
 
     @Override
-    public Foyer retrieveFoyer(long idFoyer) {
-        return foyerRepository.findById(idFoyer).orElse(null);
+    public Foyer retrieveFoyer(Long idFoyer) {
+        // Récupère un foyer par son identifiant
+        return foyerRepository.findById(idFoyer)
+                .orElseThrow(() -> new RuntimeException("Foyer non trouvé"));
     }
 
     @Override
-    public void removeFoyer(long idFoyer) {
-
+    public void removeFoyer(Long idFoyer) {
+        // Supprime un foyer de la base de données
         foyerRepository.deleteById(idFoyer);
     }
 
     @Override
     public Foyer ajouterFoyerEtAffecterAUniversite(Foyer foyer, long idUniversite) {
-        // Récupérer la liste des blocs avant de faire l'ajout
-        List<Bloc> blocs = foyer.getBlocs();
-
-        // Si la liste des blocs est null, l'initialiser avec une liste vide
-        if (blocs == null) {
-            blocs = new ArrayList<>();
+        // Si la liste des blocs est null, on l'initialise
+        if (foyer.getBlocs() == null) {
+            foyer.setBlocs(new ArrayList<>());
         }
 
-        // Sauvegarder le foyer (enregistrer ou mettre à jour le foyer dans la base de données)
-        Foyer f = foyerRepository.save(foyer);
+        // On trouve l'université par son identifiant
+        Universite u = universiteRepository.findById(idUniversite)
+                .orElseThrow(() -> new RuntimeException("Université non trouvée"));
 
-        // Récupérer l'université à partir de l'ID
-        Universite u = universiteRepository.findById(idUniversite).orElse(null);
-        if (u == null) {
-            // Si l'université n'existe pas, on peut choisir de retourner null ou de lancer une exception
-            // pour indiquer que l'université n'a pas été trouvée
-            throw new RuntimeException("Université non trouvée avec l'ID: " + idUniversite);
-        }
+        // On associe l'université au foyer et on le sauvegarde
+        foyer.setUniversite(u);
+        Foyer savedFoyer = foyerRepository.save(foyer);
 
-        // Affecter chaque bloc au foyer
-        for (Bloc bloc : blocs) {
-            bloc.setFoyer(f);
-            blocRepository.save(bloc); // Sauvegarder chaque bloc
-        }
+        // On associe chaque bloc au foyer et on les sauvegarde
+        foyer.getBlocs().forEach(bloc -> {
+            bloc.setFoyer(savedFoyer);
+            blocRepository.save(bloc);
+        });
 
-        // Associer le foyer à l'université
-        u.setFoyer(f);
+        // On met à jour l'université avec le foyer associé
+        u.setFoyer(savedFoyer);
+        universiteRepository.save(u);
 
-        // Sauvegarder l'université avec la relation de foyer mise à jour
-        return universiteRepository.save(u).getFoyer();
+        return savedFoyer;
     }
-
 }
