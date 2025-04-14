@@ -1,6 +1,8 @@
 package tn.esprit.tpfoyer.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Bloc;
@@ -46,9 +48,26 @@ public class BlocController {
     }
 
     // Affecte une liste de chambres à un bloc donné
-    @PutMapping("/affecterChambres/{idBloc}")
-    public ResponseEntity<Bloc> affecterChambres(@RequestBody List<Long> numChambres, @PathVariable long idBloc) {
-        Bloc bloc = blocService.affecterChambresABloc(numChambres, idBloc);
-        return ResponseEntity.ok(bloc);
+//    @PutMapping("/affecterChambres/{idBloc}")
+//    public ResponseEntity<Bloc> affecterChambres(@RequestBody List<Long> numChambres, @PathVariable long idBloc) {
+//        Bloc bloc = blocService.affecterChambresABloc(numChambres, idBloc);
+//        return ResponseEntity.ok(bloc);
+//    }
+
+    @PutMapping("/{idBloc}/affecter-chambres")
+    public ResponseEntity<?> affecterChambresABloc(
+            @RequestBody List<Long> numChambres,
+            @PathVariable Long idBloc) {
+
+        try {
+            Bloc bloc = blocService.affecterChambresABloc(numChambres, idBloc);
+            return ResponseEntity.ok(bloc);
+
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
 }
