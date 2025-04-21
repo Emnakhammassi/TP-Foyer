@@ -26,7 +26,7 @@ public class Bloc {
     @JsonIgnore // Empêche les boucles infinies en JSON
     private Foyer foyer; // Référence vers le foyer auquel appartient ce bloc
 
-    @OneToMany(mappedBy = "bloc") // Un bloc peut contenir plusieurs chambres
+    @OneToMany(mappedBy = "bloc", cascade = CascadeType.REMOVE)// Un bloc peut contenir plusieurs chambres
     @JsonIgnore // Empêche la sérialisation JSON récursive
     private List<Chambre> chambres; // Liste des chambres contenues dans ce bloc
 

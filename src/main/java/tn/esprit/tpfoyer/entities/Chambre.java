@@ -21,7 +21,7 @@ public class Chambre {
     @Enumerated(EnumType.STRING)
     private TypeChambre typeC;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Bloc bloc;
 

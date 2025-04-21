@@ -3,6 +3,7 @@ package tn.esprit.tpfoyer.services;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.entities.Chambre;
 import tn.esprit.tpfoyer.entities.TypeChambre;
 import tn.esprit.tpfoyer.entities.Universite;
@@ -106,4 +107,26 @@ public class ChambreServiceImpl implements IChambreServices {
         Date anneeActuelle = new Date(); // Peut être remplacée par une logique métier
         return chambreRepository.findChambresNonReservees(nomUniversite, type, anneeActuelle);
     }
+
+
+
+
+//    public Chambre addChambreToBloc(Chambre c, Long idBloc) {
+//        // 1. Vérifier que le bloc existe
+//        Bloc bloc = blocRepository.findById(idBloc)
+//                .orElseThrow(() -> new EntityNotFoundException("Bloc non trouvé avec l'ID: " + idBloc));
+//
+//        // 2. Vérifier que le numéro de chambre est unique dans ce bloc
+//        if (chambreRepository.existsByNumeroChambreAndBlocId(c.getNumeroChambre(), idBloc)) {
+//            throw new IllegalArgumentException("Une chambre avec ce numéro existe déjà dans le bloc");
+//        }
+//
+//        // 3. Lier la chambre au bloc
+//        c.setBloc(bloc);
+//        bloc.getChambres().add(c); // Optionnel si la relation est gérée côté Chambre
+//
+//        // 4. Sauvegarder la chambre
+//        return chambreRepository.save(c);
+//    }
+
 }

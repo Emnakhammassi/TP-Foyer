@@ -85,47 +85,31 @@ public class BlocServiceImpl implements IBlocServices {
 
     @Override
    public Bloc affecterChambresABloc(List<Long> numChambres, long idBloc) {
-        // 1. Vérifier que le bloc existe
         Bloc bloc = blocRepository.findById(idBloc)
                 .orElseThrow(() -> new EntityNotFoundException("Bloc non trouvé avec l'ID: " + idBloc));
 
-        // 2. Vérifier que la liste des chambres n'est pas vide
         if (numChambres == null || numChambres.isEmpty()) {
             throw new IllegalArgumentException("La liste des numéros de chambre ne peut pas être vide");
         }
 
-        // 3. Récupérer les chambres existantes
         List<Chambre> chambres = chambreRepository.findByNumeroChambreIn(numChambres);
 
-        // 4. Vérifier que toutes les chambres existent
         if (chambres.size() != numChambres.size()) {
             List<Long> chambresNonTrouvees = new ArrayList<>(numChambres);
             chambres.forEach(c -> chambresNonTrouvees.remove(c.getNumeroChambre()));
             throw new EntityNotFoundException("Chambres non trouvées: " + chambresNonTrouvees);
         }
 
-        // 5. Affecter le bloc aux chambres
         chambres.forEach(chambre -> {
-            // Vérifier si la chambre n'est pas déjà affectée à un autre bloc
             if (chambre.getBloc() != null && !chambre.getBloc().getIdBloc().equals(idBloc)) {
                 throw new IllegalStateException(
-                        "La chambre " + chambre.getNumeroChambre() + " est déjà affectée au bloc " +
-                                chambre.getBloc().getNomBloc()
+                        "La chambre " + chambre.getNumeroChambre() +
+                                " est déjà affectée au bloc " + chambre.getBloc().getNomBloc()
                 );
             }
             chambre.setBloc(bloc);
         });
 
-        // 6. Mettre à jour la capacité du bloc si nécessaire
-        long nouvelleCapacite = chambres.stream()
-                .mapToLong(c -> c.getTypeC() == TypeChambre.SIMPLE ? 1 :
-                        c.getTypeC() == TypeChambre.DOUBLE ? 2 : 3)
-                .sum();
-
-        bloc.setCapaciteBloc(bloc.getCapaciteBloc() + nouvelleCapacite);
-
-        // 7. Sauvegarder
-        chambreRepository.saveAll(chambres);
-        return blocRepository.save(bloc);
+        return bloc;
     }
 }

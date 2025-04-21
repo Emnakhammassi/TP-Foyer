@@ -6,8 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Bloc;
+import tn.esprit.tpfoyer.entities.Chambre;
+import tn.esprit.tpfoyer.services.ChambreServiceImpl;
 import tn.esprit.tpfoyer.services.IBlocServices;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,6 +19,7 @@ import java.util.List;
 public class BlocController {
 
     private final IBlocServices blocService;
+    private final ChambreServiceImpl chambreService;
 
     // Retourne la liste de tous les blocs
     @GetMapping
@@ -69,5 +73,35 @@ public class BlocController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
+//    @PostMapping("/{blocId}/chambres/from-bloc")
+//    public ResponseEntity<?> addChambreFromBloc(
+//            @RequestBody Bloc blocRequest,
+//            @PathVariable Long blocId) {
+//
+//        try {
+//            // Vérification basique
+//            if (blocRequest.getChambres() == null || blocRequest.getChambres().isEmpty()) {
+//                return ResponseEntity.badRequest().body("Aucune chambre fournie dans le bloc");
+//            }
+//
+//            // Ajout de chaque chambre fournie dans le blocRequest
+//            List<Chambre> savedChambres = new ArrayList<>();
+//            for (Chambre c : blocRequest.getChambres()) {
+//                Chambre saved = chambreService.addChambreToBloc(c, blocId);
+//                savedChambres.add(saved);
+//            }
+//
+//            return ResponseEntity.status(HttpStatus.CREATED).body(savedChambres);
+//
+//        } catch (EntityNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
+
+
 
 }
